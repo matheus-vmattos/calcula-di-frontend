@@ -14,20 +14,28 @@ interface ScreenProps {
 /**
  * Wrapper padrão de tela do CalculaDI.
  *
- * Cuida de:
- *   - SafeArea (notch, status bar)
- *   - Background branco consistente
- *   - Padding horizontal padrão
+ * Estrutura:
+ *   - SafeAreaView externo: trata notch/status bar.
+ *   - View intermediária com fundo "ambiente" (visível só no desktop wide).
+ *   - View interna (max-w-md) que centraliza o conteúdo em um trilho fixo,
+ *     dando aparência de app mobile mesmo numa tela larga.
  *
- * Estrutura: SafeAreaView externo (apenas pra SafeArea) + View interna
- * que recebe as classes Tailwind. Isso evita o problema do NativeWind
- * não processar className em SafeAreaView (componente externo).
+ * Isso garante que o app pareça nativo em qualquer largura: no celular
+ * ocupa tudo, no desktop fica num "celular virtual" no centro.
  */
 export function Screen({ children, noPadding = false }: ScreenProps) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }} edges={['top', 'left', 'right']}>
-      <View className={`flex-1 bg-background ${noPadding ? '' : 'px-5'}`}>
-        {children}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: '#EDEDF0' }}
+      edges={['top', 'left', 'right']}
+    >
+      <View className="flex-1 items-center">
+        <View
+          className={`flex-1 w-full bg-background ${noPadding ? '' : 'px-5'}`}
+          style={{ maxWidth: 440 }}
+        >
+          {children}
+        </View>
       </View>
     </SafeAreaView>
   );

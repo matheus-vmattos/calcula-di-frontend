@@ -1,33 +1,32 @@
 /**
  * Design tokens do CalculaDI.
  *
- * Centraliza cores, espaçamentos e tipografia em um único lugar.
- * Todas as telas e componentes consomem daqui — assim, mudar a paleta
- * inteira é alterar este arquivo (e nada mais).
- *
- * Inspiração: Apple Human Interface Guidelines (HIG) e iOS Wallet/Stocks.
+ * Paleta prata-futurista: tons neutros frios, sem cor de destaque.
+ * Inspirações: Apple Human Interface Guidelines, Tesla touchscreen,
+ * Linear app.
  */
 
 export const colors = {
-  // Backgrounds
-  background: '#FFFFFF',
-  surface: '#F5F5F7',
-  surfaceElevated: '#FAFAFA',
+  // Fundos
+  background: '#FAFAFB',
+  surface: '#F2F2F4',
+  surfaceElevated: '#E8E8EB',
+  ambient: '#EDEDF0', // visível só no desktop wide (fora do trilho mobile)
 
-  // Acentos (uso muito controlado)
-  primary: '#000000',      // CTA principal, ícones ativos
-  primaryInverse: '#FFFFFF', // texto sobre primary
+  // Acento principal (grafite metálico)
+  primary: '#1C1C1E',
+  primaryInverse: '#FAFAFA',
 
   // Textos
-  textPrimary: '#1D1D1F',
-  textSecondary: '#86868B',
-  textTertiary: '#AEAEB2',
+  textPrimary: '#1C1C1E',
+  textSecondary: '#6E6E73',
+  textTertiary: '#A1A1A6',
 
   // Estrutura
-  border: '#D2D2D7',
-  divider: '#E5E5EA',
+  border: '#D6D6D9',
+  divider: '#E8E8EB',
 
-  // Semânticos (uso raro, só pra estados de sistema)
+  // Semânticos
   success: '#34C759',
   warning: '#FF9500',
   danger: '#FF3B30',
@@ -69,7 +68,6 @@ export const fontWeight = {
   semibold: '600',
 } as const;
 
-// Type helpers — pra TypeScript autocompletar bonito nas chamadas
 export type ColorToken = keyof typeof colors;
 export type SpacingToken = keyof typeof spacing;
 export type RadiusToken = keyof typeof radius;

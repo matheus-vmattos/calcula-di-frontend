@@ -21,8 +21,8 @@ export const ptBR = {
   },
 
   indices: {
-    title: 'Como está o mercado',
-    subtitle: 'Dados oficiais do Banco Central · cache 12h',
+    title: 'Taxas hoje',
+    subtitle: 'Dados oficiais do Banco Central ',
     ipca: 'IPCA',
     igpm: 'IGP-M',
     selic: 'SELIC META',
@@ -31,14 +31,14 @@ export const ptBR = {
     yearly: 'ao ano',
     dailyEquivalent: 'equivalente diária',
     dailyRate: 'taxa diária',
-    simulateCdb: 'Simular um CDB',
+    simulateCdb: 'Calcular meu título',
     sourceLive: 'Atualizado agora',
     sourceCache: 'Dados em cache',
     sourcePartial: 'Dados parciais',
   },
 
   calculator: {
-    title: 'Simular um CDB',
+    title: 'Simular um Título',
     label: 'CALCULADORA',
     amount: 'Quanto vai investir?',
     rate: 'Rentabilidade',

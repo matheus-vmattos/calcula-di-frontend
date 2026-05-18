@@ -21,8 +21,8 @@ export const enUS = {
   },
 
   indices: {
-    title: 'Market overview',
-    subtitle: 'Official data from Brazil Central Bank · 12h cache',
+    title: "Today's rates",
+    subtitle: 'Official data from Brazil Central Bank ',
     ipca: 'IPCA',
     igpm: 'IGP-M',
     selic: 'SELIC',
@@ -31,14 +31,14 @@ export const enUS = {
     yearly: 'per year',
     dailyEquivalent: 'daily equivalent',
     dailyRate: 'daily rate',
-    simulateCdb: 'Simulate a CDB',
+    simulateCdb: 'Calculate yield',
     sourceLive: 'Updated now',
     sourceCache: 'Cached data',
     sourcePartial: 'Partial data',
   },
 
   calculator: {
-    title: 'Simulate a CDB',
+    title: 'Simulate Bond',
     label: 'CALCULATOR',
     amount: 'How much will you invest?',
     rate: 'Yield rate',

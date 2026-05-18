@@ -8,16 +8,25 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#FFFFFF',
-        surface: '#F5F5F7',
-        'surface-elevated': '#FAFAFA',
-        primary: '#000000',
-        'primary-inverse': '#FFFFFF',
-        'text-primary': '#1D1D1F',
-        'text-secondary': '#86868B',
-        'text-tertiary': '#AEAEB2',
-        border: '#D2D2D7',
-        divider: '#E5E5EA',
+        // Fundos (paleta prata)
+        background: '#FAFAFB',
+        surface: '#F2F2F4',
+        'surface-elevated': '#E8E8EB',
+
+        // Acento principal (grafite metálico — substitui o preto)
+        primary: '#1C1C1E',
+        'primary-inverse': '#FAFAFA',
+
+        // Textos
+        'text-primary': '#1C1C1E',
+        'text-secondary': '#6E6E73',
+        'text-tertiary': '#A1A1A6',
+
+        // Estrutura (bordas mais sutis, prateadas)
+        border: '#D6D6D9',
+        divider: '#E8E8EB',
+
+        // Semânticos
         success: '#34C759',
         warning: '#FF9500',
         danger: '#FF3B30',
