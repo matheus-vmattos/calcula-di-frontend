@@ -5,7 +5,7 @@
 
 export const ptBR = {
   common: {
-    appName: 'CalculaDI',
+    appName: 'CalculaAI',
     loading: 'Carregando...',
     error: 'Algo deu errado',
     retry: 'Tentar de novo',
@@ -58,7 +58,7 @@ export const ptBR = {
   },
 
   mtm: {
-    title: 'Prefixado (MTM)',
+    title: 'Prefixado (MAM)',
     subtitle: 'Simule venda antecipada com marcação a mercado.',
     investAmount: 'Valor investido (R$)',
     contractedRate: 'Taxa contratada (% a.a.)',
@@ -79,7 +79,7 @@ export const ptBR = {
       'Estimativa educacional com aproximação de dias úteis e taxa de referência.',
     chartTitle: 'Evolução estimada',
     chartContractedCurve: 'Curva contratada',
-    chartMtmToday: 'Venda hoje (MTM)',
+    chartMtmToday: 'Venda hoje (MAM)',
     dateFormatHint: 'Formato de data: DD/MM/AAAA',
   },
 

@@ -1,32 +1,19 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Text, View, ScrollView, Pressable } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Text, View, ScrollView, Pressable, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Screen, Card, Button, CampoNumero, SegmentedControl } from '../components';
 import { calcularCdb } from '../domain/cdb-calculator';
 import { converterPrazo, type UnidadePrazo } from '../domain/prazo';
 import { formatarMoeda, formatarPercentual } from '../domain/format';
-import { loadJson, saveJson } from '../services/local-storage';
 
 interface CalculadoraScreenProps {
-  /** CDI anual atual (vem da tela de índices). Fallback 14.4 se indisponível. */
   cdiAnual?: number;
-  /** Callback pra voltar à tela de índices. */
   onBack?: () => void;
 }
 
 const PRESETS_CDI = ['100%', '110%', '120%', 'Outro'] as const;
 const UNIDADES: UnidadePrazo[] = ['dias', 'meses', 'anos'];
-
-const CALCULADORA_STORAGE_KEY = 'calculadora_form_v1';
-
-interface CalculadoraPersistedState {
-  valor: string;
-  presetIdx: number;
-  percentualCustom: string;
-  unidadeIdx: number;
-  prazoValor: string;
-}
 
 function maskMoneyBR(input: string): string {
   const digits = input.replace(/\D/g, '');
@@ -38,20 +25,24 @@ function maskMoneyBR(input: string): string {
   });
 }
 
-function maskPercentBR(input: string): string {
-  const digits = input.replace(/\D/g, '').slice(0, 6);
-  if (!digits) return '';
-  const value = Number(digits) / 100;
-  return value.toLocaleString('pt-BR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-}
-
 function parseMoneyBRToNumber(masked: string): number {
   const normalized = masked.replace(/\./g, '').replace(',', '.').trim();
   const n = Number(normalized);
   return Number.isFinite(n) ? n : 0;
+}
+
+function sanitizePercentInput(value: string): string {
+  // mantém dígitos e vírgula, permite "200", "200,5", "200,50"
+  let v = value.replace(/[^\d,]/g, '');
+  const firstComma = v.indexOf(',');
+  if (firstComma !== -1) {
+    // remove vírgulas extras
+    v = v.slice(0, firstComma + 1) + v.slice(firstComma + 1).replace(/,/g, '');
+    // limita 2 casas decimais
+    const [intPart, decPart = ''] = v.split(',');
+    v = `${intPart},${decPart.slice(0, 2)}`;
+  }
+  return v;
 }
 
 function parsePercentBRToNumber(masked: string): number {
@@ -60,81 +51,23 @@ function parsePercentBRToNumber(masked: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-/**
- * Tela de simulação de CDB pós-fixado.
- * Recalcula em tempo real conforme o usuário muda os campos.
- */
 export function CalculadoraScreen({ cdiAnual = 14.4, onBack }: CalculadoraScreenProps) {
   const { t } = useTranslation();
 
   const [valor, setValor] = useState('10.000,00');
-  const [presetIdx, setPresetIdx] = useState(2); // 120% default
-  const [percentualCustom, setPercentualCustom] = useState('120,00');
-  const [unidadeIdx, setUnidadeIdx] = useState(2); // anos default
+  const [presetIdx, setPresetIdx] = useState(2);
+  const [percentualCustom, setPercentualCustom] = useState('120');
+  const [unidadeIdx, setUnidadeIdx] = useState(2);
   const [prazoValor, setPrazoValor] = useState('2');
-
-  const [isHydrated, setIsHydrated] = useState(false);
-  const lastSavedRef = useRef('');
-
-  // Hidratação inicial
-  useEffect(() => {
-    let mounted = true;
-
-    loadJson<CalculadoraPersistedState>(CALCULADORA_STORAGE_KEY).then((saved) => {
-      if (!mounted) return;
-
-      if (saved) {
-        setValor(saved.valor ?? '10.000,00');
-        setPresetIdx(
-          Number.isInteger(saved.presetIdx) && saved.presetIdx >= 0 && saved.presetIdx <= 3
-            ? saved.presetIdx
-            : 2,
-        );
-        setPercentualCustom(saved.percentualCustom ?? '120,00');
-        setUnidadeIdx(
-          Number.isInteger(saved.unidadeIdx) && saved.unidadeIdx >= 0 && saved.unidadeIdx <= 2
-            ? saved.unidadeIdx
-            : 2,
-        );
-        setPrazoValor(saved.prazoValor ?? '2');
-      }
-
-      setIsHydrated(true);
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // Persistência automática
-  useEffect(() => {
-    if (!isHydrated) return;
-
-    const payload: CalculadoraPersistedState = {
-      valor,
-      presetIdx,
-      percentualCustom,
-      unidadeIdx,
-      prazoValor,
-    };
-
-    const serialized = JSON.stringify(payload);
-    if (serialized === lastSavedRef.current) return;
-    lastSavedRef.current = serialized;
-
-    saveJson(CALCULADORA_STORAGE_KEY, payload);
-  }, [isHydrated, valor, presetIdx, percentualCustom, unidadeIdx, prazoValor]);
 
   const percentualCdi = useMemo(() => {
     if (presetIdx === 3) return parsePercentBRToNumber(percentualCustom);
     return [100, 110, 120][presetIdx];
   }, [presetIdx, percentualCustom]);
 
-  const valorNum = useMemo(() => parseMoneyBRToNumber(valor), [valor]);
-  const prazoNum = useMemo(() => Number(prazoValor.replace(/\D/g, '')), [prazoValor]);
-
   const resultado = useMemo(() => {
+    const valorNum = parseMoneyBRToNumber(valor);
+    const prazoNum = Number(prazoValor.replace(/\D/g, ''));
     if (valorNum <= 0 || prazoNum <= 0 || percentualCdi <= 0) return null;
 
     try {
@@ -149,19 +82,9 @@ export function CalculadoraScreen({ cdiAnual = 14.4, onBack }: CalculadoraScreen
     } catch {
       return null;
     }
-  }, [valorNum, prazoNum, percentualCdi, unidadeIdx, cdiAnual]);
+  }, [valor, prazoValor, percentualCdi, unidadeIdx, cdiAnual]);
 
   const labelUnidades = [t('calculator.days'), t('calculator.months'), t('calculator.years')];
-
-  if (!isHydrated) {
-    return (
-      <Screen>
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-sm text-text-secondary">{t('common.loading')}</Text>
-        </View>
-      </Screen>
-    );
-  }
 
   return (
     <Screen>
@@ -202,17 +125,23 @@ export function CalculadoraScreen({ cdiAnual = 14.4, onBack }: CalculadoraScreen
             selectedIndex={presetIdx}
             onSelect={setPresetIdx}
           />
+
           {presetIdx === 3 && (
             <View className="mt-2">
-              <CampoNumero
-                label=""
-                value={percentualCustom}
-                onChangeText={(txt) => setPercentualCustom(maskPercentBR(txt))}
-                placeholder="120,00"
-                legenda="% do CDI"
-              />
+              <Text className="mb-1.5 text-xs font-medium text-text-secondary">% do CDI</Text>
+              <View className="rounded-xl border border-border bg-surface px-3 py-2">
+                <TextInput
+                  value={percentualCustom}
+                  onChangeText={(txt) => setPercentualCustom(sanitizePercentInput(txt))}
+                  keyboardType="decimal-pad"
+                  placeholder="120"
+                  placeholderTextColor="#9A9A9F"
+                  className="text-base text-text-primary"
+                />
+              </View>
             </View>
           )}
+
           {resultado && (
             <Text className="mt-1.5 text-xs text-text-tertiary">
               {percentualCdi.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}% do CDI ·{' '}

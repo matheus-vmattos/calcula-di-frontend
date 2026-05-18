@@ -68,23 +68,32 @@ function maskMoneyBR(input: string): string {
   return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function maskPercentBR(input: string): string {
-  const digits = input.replace(/\D/g, '').slice(0, 6);
-  if (!digits) return '';
-  const value = Number(digits) / 100;
-  return value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-}
-
 function parseMoneyBRToNumber(masked: string): number {
   const n = Number(masked.replace(/\./g, '').replace(',', '.').trim());
   if (!Number.isFinite(n) || n <= 0) throw new Error('Valor investido inválido.');
   return n;
 }
 
+function sanitizePercentInput(value: string): string {
+  // Permite "200", "200,5", "200,50" e não bloqueia digitação do 0
+  let v = value.replace(/[^\d,]/g, '');
+  const firstComma = v.indexOf(',');
+  if (firstComma !== -1) {
+    v = v.slice(0, firstComma + 1) + v.slice(firstComma + 1).replace(/,/g, '');
+    const [intPart, decPart = ''] = v.split(',');
+    v = `${intPart},${decPart.slice(0, 2)}`;
+  }
+  return v;
+}
+
 function parsePercentBRToNumber(masked: string, fieldName: string): number {
   const n = Number(masked.replace(/\./g, '').replace(',', '.').trim());
   if (!Number.isFinite(n)) throw new Error(`${fieldName} inválida.`);
   return n;
+}
+
+function formatPercentBR(value: number): string {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function TaxaToggle({
@@ -120,8 +129,8 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
   const { t } = useTranslation();
 
   const [valor, setValor] = useState('10.000,00');
-  const [taxaContratada, setTaxaContratada] = useState('15,00');
-  const [taxaMercado, setTaxaMercado] = useState('14,00');
+  const [taxaContratada, setTaxaContratada] = useState('15');
+  const [taxaMercado, setTaxaMercado] = useState('14');
 
   const [refTaxa, setRefTaxa] = useState<ReferenciaTaxa>('cdi');
   const [cdiAnual, setCdiAnual] = useState<number | null>(null);
@@ -141,8 +150,8 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
       if (!mounted) return;
       if (saved) {
         setValor(saved.valor ?? '10.000,00');
-        setTaxaContratada(saved.taxaContratada ?? '15,00');
-        setTaxaMercado(saved.taxaMercado ?? '14,00');
+        setTaxaContratada(saved.taxaContratada ?? '15');
+        setTaxaMercado(saved.taxaMercado ?? '14');
         setRefTaxa(saved.refTaxa ?? 'cdi');
         setDataCompra(saved.dataCompra ?? '02/01/2025');
         setDataVenc(saved.dataVenc ?? '02/01/2027');
@@ -162,23 +171,15 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
         setCdiAnual(cdi);
         setSelicAnual(selic);
 
-        if (refTaxa === 'cdi' && cdi !== null) {
-          setTaxaMercado(cdi.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-        }
-        if (refTaxa === 'selic' && selic !== null) {
-          setTaxaMercado(selic.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-        }
+        if (refTaxa === 'cdi' && cdi !== null) setTaxaMercado(formatPercentBR(cdi));
+        if (refTaxa === 'selic' && selic !== null) setTaxaMercado(formatPercentBR(selic));
       })
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    if (refTaxa === 'cdi' && cdiAnual !== null) {
-      setTaxaMercado(cdiAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    }
-    if (refTaxa === 'selic' && selicAnual !== null) {
-      setTaxaMercado(selicAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    }
+    if (refTaxa === 'cdi' && cdiAnual !== null) setTaxaMercado(formatPercentBR(cdiAnual));
+    if (refTaxa === 'selic' && selicAnual !== null) setTaxaMercado(formatPercentBR(selicAnual));
   }, [refTaxa, cdiAnual, selicAnual]);
 
   useEffect(() => {
@@ -251,7 +252,7 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
           <Text className="text-sm text-text-secondary">{t('mtm.investAmount')}</Text>
           <TextInput
             value={valor}
-            onChangeText={(t2) => setValor(maskMoneyBR(t2))}
+            onChangeText={(v) => setValor(maskMoneyBR(v))}
             keyboardType="numeric"
             placeholder="0,00"
             className="mt-1 rounded-md border border-border px-3 py-2 text-base text-text-primary"
@@ -260,9 +261,9 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
           <Text className="mt-3 text-sm text-text-secondary">{t('mtm.contractedRate')}</Text>
           <TextInput
             value={taxaContratada}
-            onChangeText={(t2) => setTaxaContratada(maskPercentBR(t2))}
-            keyboardType="numeric"
-            placeholder="0,00"
+            onChangeText={(v) => setTaxaContratada(sanitizePercentInput(v))}
+            keyboardType="decimal-pad"
+            placeholder="15"
             className="mt-1 rounded-md border border-border px-3 py-2 text-base text-text-primary"
           />
 
@@ -272,16 +273,16 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
           <Text className="mt-3 text-sm text-text-secondary">{t('mtm.marketRateUsed')}</Text>
           <TextInput
             value={taxaMercado}
-            onChangeText={(t2) => setTaxaMercado(maskPercentBR(t2))}
-            keyboardType="numeric"
-            placeholder="0,00"
+            onChangeText={(v) => setTaxaMercado(sanitizePercentInput(v))}
+            keyboardType="decimal-pad"
+            placeholder="14"
             className="mt-1 rounded-md border border-border px-3 py-2 text-base text-text-primary"
           />
 
           <Text className="mt-3 text-sm text-text-secondary">{t('mtm.purchaseDate')}</Text>
           <TextInput
             value={dataCompra}
-            onChangeText={(t2) => setDataCompra(maskDateBR(t2))}
+            onChangeText={(v) => setDataCompra(maskDateBR(v))}
             keyboardType="numeric"
             maxLength={10}
             placeholder={t('mtm.dateFormatHint')}
@@ -291,7 +292,7 @@ export function PrefixadoMtmScreen({ onBack }: PrefixadoMtmScreenProps = {}) {
           <Text className="mt-3 text-sm text-text-secondary">{t('mtm.maturityDate')}</Text>
           <TextInput
             value={dataVenc}
-            onChangeText={(t2) => setDataVenc(maskDateBR(t2))}
+            onChangeText={(v) => setDataVenc(maskDateBR(v))}
             keyboardType="numeric"
             maxLength={10}
             placeholder={t('mtm.dateFormatHint')}
