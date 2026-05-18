@@ -57,6 +57,32 @@ export const enUS = {
     showCalculation: 'Show calculation details',
   },
 
+  mtm: {
+    title: 'Fixed-rate (MTM)',
+    subtitle: 'Simulate early sale with mark-to-market pricing.',
+    investAmount: 'Invested amount (R$)',
+    contractedRate: 'Contracted rate (% p.a.)',
+    marketRateRef: 'Market rate reference',
+    marketRateUsed: 'Market rate used (% p.a.)',
+    purchaseDate: 'Purchase date',
+    maturityDate: 'Maturity date',
+    sellTodayEstimated: 'Estimated sale value today',
+    versusCurveToday: 'Comparison against contracted curve today',
+    aboveCurve: 'Above curve',
+    belowCurve: 'Below curve',
+    estimatedNetSaleValue: 'Estimated net sale value',
+    grossGain: 'Gross gain',
+    estimatedIof: 'Estimated IOF',
+    estimatedIncomeTax: 'Estimated income tax ({{rate}}%)',
+    netGain: 'Net gain',
+    educationalDisclaimer:
+      'Educational estimate with business-day approximation and reference rate.',
+    chartTitle: 'Estimated evolution',
+    chartContractedCurve: 'Contracted curve',
+    chartMtmToday: 'Sale today (MTM)',
+    dateFormatHint: 'Date format: DD/MM/YYYY',
+  },
+
   about: {
     title: 'About CalculaDI',
     dataSource: 'Where does the data come from?',

@@ -57,6 +57,32 @@ export const ptBR = {
     showCalculation: 'Ver memorial de cálculo',
   },
 
+  mtm: {
+    title: 'Prefixado (MTM)',
+    subtitle: 'Simule venda antecipada com marcação a mercado.',
+    investAmount: 'Valor investido (R$)',
+    contractedRate: 'Taxa contratada (% a.a.)',
+    marketRateRef: 'Referência da taxa de mercado',
+    marketRateUsed: 'Taxa de mercado usada (% a.a.)',
+    purchaseDate: 'Data da compra',
+    maturityDate: 'Data de vencimento',
+    sellTodayEstimated: 'Valor de venda hoje (estimado)',
+    versusCurveToday: 'Comparação com curva contratada hoje',
+    aboveCurve: 'Acima da curva',
+    belowCurve: 'Abaixo da curva',
+    estimatedNetSaleValue: 'Valor líquido estimado na venda',
+    grossGain: 'Ganho bruto',
+    estimatedIof: 'IOF estimado',
+    estimatedIncomeTax: 'IR estimado ({{rate}}%)',
+    netGain: 'Ganho líquido',
+    educationalDisclaimer:
+      'Estimativa educacional com aproximação de dias úteis e taxa de referência.',
+    chartTitle: 'Evolução estimada',
+    chartContractedCurve: 'Curva contratada',
+    chartMtmToday: 'Venda hoje (MTM)',
+    dateFormatHint: 'Formato de data: DD/MM/AAAA',
+  },
+
   about: {
     title: 'Sobre o CalculaDI',
     dataSource: 'De onde vêm os dados?',
