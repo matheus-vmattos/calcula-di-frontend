@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "calcula-di-frontend",
+    "name": "CalculaAI",
     "slug": "calcula-di-frontend",
     "version": "1.0.1",
     "orientation": "portrait",
@@ -17,25 +17,19 @@
       "buildNumber": "2"
     },
     "android": {
-      "versionCode": 2,
+      "package": "calculai.com",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "calculai.com"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-localization"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "fd77efc8-41ad-429d-85d2-a7d035c63433"
-      }
-    }
+    ]
   }
 }
