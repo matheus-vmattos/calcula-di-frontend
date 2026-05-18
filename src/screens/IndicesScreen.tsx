@@ -7,20 +7,17 @@ import { fetchIndicesSnapshot, IndicesApiError } from '../services';
 import type { IndicesSnapshot } from '../types/indices';
 
 interface IndicesScreenProps {
-  /** Callback acionado quando o usuário toca em "Calcular rendimento". */
   onNavigateToCalculator?: () => void;
+  onNavigateToPrefixadoMtm?: () => void;
 }
 
-/**
- * Tela principal do CalculaDI: exibe os 4 índices em grid 2x2,
- * com loading, tratamento de erro, pull-to-refresh e botão pra calculadora.
- *
- * NOTA: o snapshot internamente tem o campo `origem` ('cache' | 'live' |
- * 'parcial'), mas isso é detalhe técnico e NÃO é exibido ao usuário.
- * Fica disponível só para debugging via DevTools.
- */
-export function IndicesScreen({ onNavigateToCalculator }: IndicesScreenProps = {}) {
+export function IndicesScreen({
+  onNavigateToCalculator,
+  onNavigateToPrefixadoMtm,
+}: IndicesScreenProps = {}) {
   const { t } = useTranslation();
+  const handleNavigateToCalculator = onNavigateToCalculator ?? (() => {});
+  const handleNavigateToPrefixadoMtm = onNavigateToPrefixadoMtm ?? (() => {});
 
   const [snapshot, setSnapshot] = useState<IndicesSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,12 +57,8 @@ export function IndicesScreen({ onNavigateToCalculator }: IndicesScreenProps = {
         <Text className="text-xs text-text-tertiary uppercase tracking-wider">
           {t('navigation.indices')}
         </Text>
-        <Text className="mt-1 text-3xl font-medium text-text-primary">
-          {t('indices.title')}
-        </Text>
-        <Text className="mt-1 text-sm text-text-secondary">
-          {t('indices.subtitle')}
-        </Text>
+        <Text className="mt-1 text-3xl font-medium text-text-primary">{t('indices.title')}</Text>
+        <Text className="mt-1 text-sm text-text-secondary">{t('indices.subtitle')}</Text>
 
         {loading && (
           <View className="mt-10 items-center">
@@ -127,8 +120,17 @@ export function IndicesScreen({ onNavigateToCalculator }: IndicesScreenProps = {
             <View className="mt-6">
               <Button
                 label={t('indices.simulateCdb')}
-                onPress={onNavigateToCalculator ?? (() => {})}
+                onPress={handleNavigateToCalculator}
                 variant="primary"
+                fullWidth
+              />
+            </View>
+
+            <View className="mt-3">
+              <Button
+                label="Simular Prefixado (MTM)"
+                onPress={handleNavigateToPrefixadoMtm}
+                variant="secondary"
                 fullWidth
               />
             </View>

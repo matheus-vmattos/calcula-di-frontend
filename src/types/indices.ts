@@ -11,9 +11,9 @@ export interface IndiceMensal {
   nome: 'IPCA' | 'IGP-M';
   valorMes: number;
   acumulado12m: number;
-  mesReferencia: string;       // "MM/YYYY"
+  mesReferencia?: string; // "MM/YYYY" (opcional em snapshots legados)
   mesReferenciaDisplay: string; // "Abril/2026"
-  dataAtualizacao: string;      // ISO date
+  dataAtualizacao: string; // ISO date
 }
 
 export interface IndiceAnual {
