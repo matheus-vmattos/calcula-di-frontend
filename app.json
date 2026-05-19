@@ -14,10 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "2"
+      "buildNumber": "2",
+      "bundleIdentifier": "com.calculai.app"
     },
     "android": {
-      "package": "calculai.com",
+      "package": "com.calculai.app",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -30,6 +32,11 @@
     },
     "plugins": [
       "expo-localization"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "fd77efc8-41ad-429d-85d2-a7d035c63433"
+      }
+    }
   }
 }
