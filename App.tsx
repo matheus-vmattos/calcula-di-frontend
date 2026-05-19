@@ -1,12 +1,13 @@
 import './global.css';
 import './src/i18n';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
+import BrandIntroSplash from './src/components/BrandIntroSplash';
 import { IndicesScreen } from './src/screens/IndicesScreen';
 import { CalculadoraScreen } from './src/screens/CalculadoraScreen';
 import { PrefixadoMtmScreen } from './src/screens/PrefixadoMtmScreen';
@@ -61,6 +62,12 @@ function AppContent() {
 }
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  if (showIntro) {
+    return <BrandIntroSplash onFinish={() => setShowIntro(false)} />;
+  }
+
   return (
     <SafeAreaProvider>
       <AppContent />
