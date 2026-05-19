@@ -31,8 +31,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "fd77efc8-41ad-429d-85d2-a7d035c63433"
+        "projectId": "c7f6a6ce-101e-4da1-baeb-a2d8d87634c8"
       }
-    }
+    },
+    "owner": "matheus-mattos"
   }
 }
